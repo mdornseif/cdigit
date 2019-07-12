@@ -24,6 +24,9 @@ module.exports = {
       it('implements compute()', () => {
         assert.equal(typeof algo.compute, 'function', 'typeof algo.compute');
       });
+      it('implements combine()', () => {
+        assert.equal(typeof algo.combine, 'function', 'typeof algo.combine');
+      });
       it('implements parse()', () => {
         assert.equal(typeof algo.parse, 'function', 'typeof algo.parse');
       });
@@ -48,6 +51,13 @@ module.exports = {
           assert.deepEqual(algo.parse(algo.generate(src)), [src, cc], `parse(generate(${src}))`);
         });
       });
+      it('is a shortcut for `combine(num, compute(num))`', () => {
+        // eslint-disable-next-line no-unused-vars
+        validCases.forEach(([num, src, cc]) => {
+          assert.equal(algo.generate(src),
+            algo.combine(src, algo.compute(src)), `generate(${src})`);
+        });
+      });
     });
 
     describe('validate()', () => {
@@ -62,6 +72,12 @@ module.exports = {
           assert.ok(!algo.validate(num), `validate(${num})`);
         });
       });
+      it('is a shortcut for `compute(src) === cc`', () => {
+        // eslint-disable-next-line no-unused-vars
+        validCases.forEach(([num, src, cc]) => {
+          assert.equal(algo.validate(num), algo.compute(src) === cc, `validate(${num})`);
+        });
+      });
     });
 
     describe('compute()', () => {
@@ -73,11 +89,33 @@ module.exports = {
       });
     });
 
+    describe('combine()', () => {
+      it('constructs a valid number from a source number and check digit(s)', () => {
+        // eslint-disable-next-line no-unused-vars
+        validCases.forEach(([num, src, cc]) => {
+          assert.equal(algo.combine(src, cc), num, `combine(${src}, ${cc})`);
+        });
+      });
+      it('combines `parse(num)`', () => {
+        // eslint-disable-next-line no-unused-vars
+        validCases.forEach(([num, src, cc]) => {
+          assert.equal(algo.combine(...algo.parse(num)), num, `combine(...parse(${num}))`);
+        });
+      });
+    });
+
     describe('parse()', () => {
       it('extracts the source number and check digit(s)', () => {
         // eslint-disable-next-line no-unused-vars
         validCases.forEach(([num, src, cc]) => {
           assert.deepEqual(algo.parse(num), [src, cc], `parse(${num})`);
+        });
+      });
+      it('parses `combine(src, cc)`', () => {
+        // eslint-disable-next-line no-unused-vars
+        validCases.forEach(([num, src, cc]) => {
+          assert.deepEqual(algo.parse(algo.combine(...[src, cc])),
+            [src, cc], `parse(combine(...[${src}, ${cc}]))`);
         });
       });
     });

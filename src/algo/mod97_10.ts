@@ -1,7 +1,7 @@
 /**
  * cdigit
  *
- * @copyright 2018 LiosK
+ * @copyright 2018-2019 LiosK
  * @license Apache-2.0
  */
 
@@ -10,7 +10,7 @@ import { Algo, helper } from './common';
 /* tslint:disable:class-name variable-name */
 
 /** ISO/IEC 7064, MOD 97-10 implementation */
-class Mod97_10 implements Algo {
+class Mod97_10 extends Algo {
   name = 'mod97_10';
   longName = 'ISO/IEC 7064, MOD 97-10';
 
@@ -26,13 +26,8 @@ class Mod97_10 implements Algo {
     return `0${(98 - c) % 97}`.slice(-2);
   }
 
-  generate(num: string): string {
-    return `${num}${this.compute(num)}`;
-  }
-
-  validate(num: string): boolean {
-    const [src, cc] = this.parse(num);
-    return this.compute(src) === cc;
+  combine(num: string, cc: string): string {
+    return `${num}${cc}`;
   }
 
   parse(num: string): [string, string] {

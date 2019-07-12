@@ -1,7 +1,7 @@
 /**
  * cdigit
  *
- * @copyright 2018 LiosK
+ * @copyright 2018-2019 LiosK
  * @license Apache-2.0
  */
 
@@ -14,7 +14,7 @@ import { Algo, helper } from './common';
  * is not recommended to use numbers longer than 18 digits because GS1 General
  * Specifications do not explicitly specify an algorithm for them.
  */
-class GTIN implements Algo {
+class GTIN extends Algo {
   name = 'gtin';
   longName = 'GTINs (including UPC, EAN, ISBN-13, etc.)';
 
@@ -34,13 +34,8 @@ class GTIN implements Algo {
     return String(10 - sum % 10).slice(-1);
   }
 
-  generate(num: string): string {
-    return `${num}${this.compute(num)}`;
-  }
-
-  validate(num: string): boolean {
-    const [src, cc] = this.parse(num);
-    return this.compute(src) === cc;
+  combine(num: string, cc: string): string {
+    return `${num}${cc}`;
   }
 
   parse(num: string): [string, string] {

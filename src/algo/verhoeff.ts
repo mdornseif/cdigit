@@ -1,7 +1,7 @@
 /**
  * cdigit
  *
- * @copyright 2018 LiosK
+ * @copyright 2018-2019 LiosK
  * @license Apache-2.0
  */
 
@@ -18,7 +18,7 @@ import { Algo, helper } from './common';
  * string before calling this class' methods if you need to interpret a string
  * from left to right.
  */
-class Verhoeff implements Algo {
+class Verhoeff extends Algo {
   name = 'verhoeff';
   longName = 'Verhoeff Algorithm';
 
@@ -62,13 +62,8 @@ class Verhoeff implements Algo {
     return this.inv[c];
   }
 
-  generate(num: string): string {
-    return `${num}${this.compute(num)}`;
-  }
-
-  validate(num: string): boolean {
-    const [src, cc] = this.parse(num);
-    return this.compute(src) === cc;
+  combine(num: string, cc: string): string {
+    return `${num}${cc}`;
   }
 
   parse(num: string): [string, string] {

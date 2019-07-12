@@ -1,34 +1,45 @@
 /**
  * cdigit
  *
- * @copyright 2018 LiosK
+ * @copyright 2018-2019 LiosK
  * @license Apache-2.0
  */
 
-/** Common interface for check digit algorithm implementations. */
-export interface Algo {
+/** Abstract class for check digit algorithm implementations. */
+export abstract class Algo {
   /** cdigit name of the algorithm */
-  readonly name: string;
+  abstract readonly name: string;
 
   /** Human-readable name of the algorithm */
-  readonly longName: string;
+  abstract readonly longName: string;
 
   /**
    * Generate a valid number string from a given string in accordance with the
    * algorithm. The generated string includes the original string and computed
    * check digit(s) that are combined in the manner specified by the algorithm.
    *
+   * Note: This method is a shortcut for `combine(num, compute(num))`. Any
+   * overriding method must emulate this behavior.
+   *
    * @return Number with check digit(s)
    */
-  generate(numWithoutCC: string): string;
+  generate(numWithoutCC: string): string {
+    return this.combine(numWithoutCC, this.compute(numWithoutCC));
+  }
 
   /**
    * Check if a given string is valid according to the algorithm. The argument
    * must be a combined string of check digit(s) and their original number.
    *
+   * Note: This method is a shortcut for `compute(src) === cc` where
+   * `[src, cc] = parse(num)`. Any overriding method must emulate this behavior.
+   *
    * @return True if valid
    */
-  validate(numWithCC: string): boolean;
+  validate(numWithCC: string): boolean {
+    const [src, cc] = this.parse(numWithCC);
+    return this.compute(src) === cc;
+  }
 
   /**
    * Generate check digit(s) from a given number. Unlike `generate()`, this
@@ -36,14 +47,23 @@ export interface Algo {
    *
    * @return Check digit(s)
    */
-  compute(numWithoutCC: string): string;
+  abstract compute(numWithoutCC: string): string;
+
+  /**
+   * Combine check digit(s) and their original number to produce a valid number
+   * in accordance with the algorithm. Most algorithms just append check
+   * digit(s) at the rightmost position of the original number.
+   *
+   * @return Number with check digit(s)
+   */
+  abstract combine(numWithoutCC: string, cc: string): string;
 
   /**
    * Split a number into its original number and check digit(s).
    *
    * @return Tuple of two strings [numWithoutCC, cc]
    */
-  parse(numWithCC: string): [string, string];
+  abstract parse(numWithCC: string): [string, string];
 }
 
 export const helper = {
