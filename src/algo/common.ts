@@ -130,6 +130,6 @@ export const helper = {
       c %= mod + 1;
 
       return alphabet[(mod + 1 - c) % mod];
-    }
-  }
+    },
+  },
 };
